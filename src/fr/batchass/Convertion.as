@@ -235,7 +235,7 @@ package fr.batchass
 				for each (var folder:String in folders)
 				{
 					if ( clip.clipGeneratedTitle == folder) folder = clip.clipGeneratedTitleWithoutExtension;
-					tags.addTagIfNew( folder );
+					tags.addTagIfNew( folder, false );
 					var folderXmlTag:XML = <tag name={folder} creationdate={Util.nowDate} />;
 					OWN_CLIPS_XML.tags.appendChild( folderXmlTag );
 				}

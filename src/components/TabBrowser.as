@@ -118,7 +118,7 @@ private function e4xLoadComplete( event:Event ):void
 		}
 		if ( newTag )
 		{
-			tags.writeTagsFile();
+			tags.writeTagsFile(true);
 		}
 		
 	}

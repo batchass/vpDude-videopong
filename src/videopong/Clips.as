@@ -125,7 +125,7 @@ package videopong
 				writeClipsFile( refreshDatabind );
 				/*reset refreshClipsXMLList();*/
 				var tags:Tags = Tags.getInstance();
-				tags.addTagIfNew( tag );
+				tags.addTagIfNew( tag, false );
 			}
 			else
 			{

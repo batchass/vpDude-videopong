@@ -84,7 +84,7 @@ protected function tabSearchApplyBtn_clickHandler(event:MouseEvent):void
 		{
 			tags = Tags.getInstance();
 			// if tag not already in global tags, add it
-			tags.addTagIfNew( oneTag.toLowerCase() );//no reset:ok
+			tags.addTagIfNew( oneTag.toLowerCase(), false );//no reset:ok
 			
 			//test if tag is not already in clip
 			clips.addTagIfNew( oneTag.toLowerCase(), tagAutoComplete.data.@id, false );//resets search view!!!

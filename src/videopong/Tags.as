@@ -61,28 +61,31 @@ package videopong
 			}
 			if ( !isConfigured )
 			{
-				writeTagsFile();
+				writeTagsFile(false);
 			}
 			refreshTagsXMLList();
 		}
-		public function writeTagsFile():void 
+		public function writeTagsFile(sort:Boolean):void 
 		{
 			tagsXmlPath = session.dbFolderPath + File.separator + "tags.xml";
 			var tagsFile:File = File.applicationStorageDirectory.resolvePath( tagsXmlPath );
-			// sort the TAGS_XML
-			var arrayToSort:Array = new Array();
-			for each ( var item:XML in TAGS_XML.tag )
+			if ( sort )
 			{
-				arrayToSort.push( {name:item.@name,creationdate:item.@creationdate} );
+				// sort the TAGS_XML
+				var arrayToSort:Array = new Array();
+				for each ( var item:XML in TAGS_XML.tag )
+				{
+					arrayToSort.push( {name:item.@name,creationdate:item.@creationdate} );
+				}
+				
+				arrayToSort.sortOn( "name" );
+				TAGS_XML =  <tags>
+							</tags>;
+				for each ( var arrayItem:Object in arrayToSort )
+				{
+					TAGS_XML.appendChild( <tag name={arrayItem.name} creationdate={arrayItem.creationdate} /> );
+				}					
 			}
-			
-			arrayToSort.sortOn( "name" );
-			TAGS_XML =  <tags>
-						</tags>;
-			for each ( var arrayItem:Object in arrayToSort )
-			{
-				TAGS_XML.appendChild( <tag name={arrayItem.name} creationdate={arrayItem.creationdate} /> );
-			}					
 			// write the text file
 			writeTextFile( tagsFile, TAGS_XML );					
 			refreshTagsXMLList();
@@ -93,14 +96,14 @@ package videopong
 			tagsXMLList = new XMLListCollection( TAGS_XML.tag.@name );
 		}
 		
-		public function addTagIfNew( tagToSearch:String ):void
+		public function addTagIfNew( tagToSearch:String, sort:Boolean ):void
 		{
 			tagToSearch = tagToSearch.toLowerCase();
 			trace( TAGS_XML..tag.(@name==tagToSearch).length() );
 			if ( TAGS_XML..tag.(@name==tagToSearch).length() < 1 )
 			{
 				TAGS_XML.appendChild( <tag name={tagToSearch} creationdate={Util.nowDate} /> );
-				writeTagsFile();
+				writeTagsFile(sort);
 			}
 			
 		}
@@ -116,7 +119,7 @@ package videopong
 			var clipTagList:XMLList = clips.CLIPS_XML..tag as XMLList;
 			for each ( var clipTag:XML in clipTagList )
 			{
-				addTagIfNew( clipTag.@name );
+				addTagIfNew( clipTag.@name, true );
 			}			
 			
 			refreshTagsXMLList();
