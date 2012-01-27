@@ -293,10 +293,14 @@ private function resyncComplete(event:Event):void
 	var tags:Tags = Tags.getInstance();
 	tags.resyncTags();
 	//setCurrentState("Normal");
-	resyncBtn.enabled = true;
-	resyncBtn.label="Sync my own folder";
-	log.text = "";
-	cnv.progress = "";
+	if (resyncBtn)
+	{
+		resyncBtn.enabled = true;
+		resyncBtn.label="Sync my own folder";
+		log.text = "";
+		cnv.progress = "";
+		
+	}
 	progress = "";
 	summary = cnv.summary;
 }
