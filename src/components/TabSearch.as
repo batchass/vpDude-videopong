@@ -25,7 +25,7 @@ private function timerFct(event:Event):void
 {
 	applyLabel.text = "";
 	timer.stop();
-	tags.resyncTags();
+	//tags.resyncTags();
 }
 private function handleButtonClick():void
 {
@@ -72,24 +72,74 @@ private function handleTagButtonClick():void
 }
 protected function tabSearchApplyBtn_clickHandler(event:MouseEvent):void
 {
+	var tagsChanged:Boolean = false;
 	if ( tagAutoComplete.data )
 	{
-		applyLabel.text = "Tags updated...";
+		applyLabel.text = "Tags updating...";
 		// write tags to clip and tags XML
 		clips = Clips.getInstance();
-		//remove existing tags
-		clips.removeTags( tagAutoComplete.data.@id );//resets search view!!!
-		//loop in tags and add them to XML db
-		for each ( var oneTag:String in tagAutoComplete.selectedItems )
+		//get tags of clip
+		var clipTagList:XMLList = clips.getTags( tagAutoComplete.data.@id );
+		//try to delete tags if removed
+		for each ( var clipTagToRemoveIfNotFound:XML in clipTagList )
 		{
-			tags = Tags.getInstance();
-			// if tag not already in global tags, add it
-			tags.addTagIfNew( oneTag.toLowerCase(), false );//no reset:ok
-			
-			//test if tag is not already in clip
-			clips.addTagIfNew( oneTag.toLowerCase(), tagAutoComplete.data.@id, false );//resets search view!!!
+			var tagHasBeenFound:Boolean = false;
+			for each ( var t:String in tagAutoComplete.selectedItems )
+			{
+				if ( clipTagToRemoveIfNotFound.@name == t )
+				{
+					tagHasBeenFound = true;	
+				}
+			}
+			if ( !tagHasBeenFound )
+			{
+				//remove existing tags
+				clips.removeTags( tagAutoComplete.data.@id );//resets search view!!!				
+			}
 		}
-		// remove applyLabel message and resyncTags
-		timer.start();
+		//try to add tags if new
+		for each ( var tag:String in tagAutoComplete.selectedItems )
+		{
+			if ( !tagsChanged )
+			{
+				var tagFound:Boolean = false;
+				tag = tag.toLowerCase();
+				for each ( var clipTag:XML in clipTagList )
+				{
+					//test if own file
+					if ( clipTag.@name == tag )
+					{
+						tagFound = true;	
+					}	 	
+					else
+					{
+						
+					}
+				}
+				if ( !tagFound )
+				{
+					tagsChanged = true;			
+					clips.addTagIfNew( tag, tagAutoComplete.data.@id, false );//resets search view!!!
+				}
+			}
+		}
+		/*if ( tagsChanged )
+		{
+			//remove existing tags
+			clips.removeTags( tagAutoComplete.data.@id );//resets search view!!!
+			//loop in tags and add them to XML db
+			for each ( var oneTag:String in tagAutoComplete.selectedItems )
+			{
+				oneTag = oneTag.toLowerCase();
+				// tags = Tags.getInstance();
+				// if tag not already in global tags, add it
+				// done in clips.addTagIfNew: tags.addTagIfNew( oneTag, false );//no reset:ok
+				
+				//test if tag is not already in clip
+				clips.addTagIfNew( oneTag, tagAutoComplete.data.@id, false );//resets search view!!!
+			}
+			// remove applyLabel message and resyncTags
+		}*/
+		timer.start();		
 	}
 }	

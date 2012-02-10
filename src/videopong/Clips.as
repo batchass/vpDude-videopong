@@ -97,6 +97,8 @@ package videopong
 		// test if new tag in clip xml
 		public function addTagIfNew( tag:String, clipId:String, refreshDatabind:Boolean ):void
 		{
+			var start:Date = new Date();
+
 			//read clip xml file
 			var localClipXMLFile:String = session.dbFolderPath + File.separator + clipId + ".xml" ;
 			var clipXmlFile:File = new File( localClipXMLFile );
@@ -127,10 +129,8 @@ package videopong
 				var tags:Tags = Tags.getInstance();
 				tags.addTagIfNew( tag, false );
 			}
-			else
-			{
-				trace( tag + " already in clip xml file");
-			}
+			var end:Date = new Date();
+			Util.log("Clips, addTagIfNew took: " + (end.getTime() - start.getTime()) + " msecs" );
 			
 		}
 		// remove all tags in clip xml and add originally added tags
@@ -145,7 +145,7 @@ package videopong
 			delete clipXml.tags.tag;
 			//remove tags from global CLIPS_XML file
 			delete CLIPS_XML..video.(@id==clipId).tags.tag;
-
+			
 			//test for addedtag in clip xml
 			var clipTagList:XMLList = clipXml..addedtag as XMLList;
 			for each ( var clipTag:XML in clipTagList )
@@ -157,7 +157,16 @@ package videopong
 			
 			writeClipXmlFile( clipId, clipXml );
 			writeClipsFile(false);
-			//refreshClipsXMLList();
+		}		
+		public function getTags( clipId:String ):XMLList
+		{
+			//read clip xml file
+			var localClipXMLFile:String = session.dbFolderPath + File.separator + clipId + ".xml" ;
+			var clipXmlFile:File = new File( localClipXMLFile );
+			var clipXml:XML = new XML( readTextFile( clipXmlFile ) );;					
+			
+			var clipTagList:XMLList = clipXml.tags.tag as XMLList;
+			return clipTagList;
 		}
 		public function newClip( urllocal:String ):Boolean
 		{

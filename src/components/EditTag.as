@@ -69,7 +69,6 @@ protected function tagedit_creationCompleteHandler(event:FlexEvent):void
 protected function applyBtn_clickHandler(event:MouseEvent):void
 {
 	// write tags to clip and tags XML
-	trace(tagAutoComplete.selectedItems);
 	clips = Clips.getInstance();
 	//remove existing tags
 	clips.removeTags( _data.@id );
@@ -78,7 +77,7 @@ protected function applyBtn_clickHandler(event:MouseEvent):void
 	{
 		tags = Tags.getInstance();
 		// if tag not already in global tags, add it
-		tags.addTagIfNew( oneTag.toLowerCase() );
+		//tags.addTagIfNew( oneTag.toLowerCase() );
 		
 		//test if tag is not already in clip
 		clips.addTagIfNew( oneTag.toLowerCase(), _data.@id  );

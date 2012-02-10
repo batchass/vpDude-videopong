@@ -98,13 +98,14 @@ package videopong
 		
 		public function addTagIfNew( tagToSearch:String, sort:Boolean ):void
 		{
-			tagToSearch = tagToSearch.toLowerCase();
-			trace( TAGS_XML..tag.(@name==tagToSearch).length() );
+			var start:Date = new Date();
 			if ( TAGS_XML..tag.(@name==tagToSearch).length() < 1 )
 			{
 				TAGS_XML.appendChild( <tag name={tagToSearch} creationdate={Util.nowDate} /> );
 				writeTagsFile(sort);
 			}
+			var end:Date = new Date();
+			Util.log("Tags, addTagIfNew took: " + (end.getTime() - start.getTime()) + " msecs" );
 			
 		}
 		public function resyncTags():void
@@ -119,7 +120,7 @@ package videopong
 			var clipTagList:XMLList = clips.CLIPS_XML..tag as XMLList;
 			for each ( var clipTag:XML in clipTagList )
 			{
-				addTagIfNew( clipTag.@name, true );
+				addTagIfNew( clipTag.@name, false );
 			}			
 			
 			refreshTagsXMLList();
